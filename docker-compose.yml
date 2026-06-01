@@ -10,13 +10,25 @@ services:
         ports:
             - '80:80'
             - '443:443'
+        depends_on:
+            - web # ← 추가
+        networks:
+            - mynetwork # ← 추가
+
+    web: # ← 추가 (실제 앱 서비스)
+        build: . # 또는 image: 이미지명
+        container_name: web
+        ports:
+            - '8000:8000'
+        networks:
+            - mynetwork # ← 추가
 
     certbot:
         image: certbot/certbot
         volumes:
             - ./cert/certbot/conf:/etc/letsencrypt
             - ./cert/certbot/www:/var/www/certbot
-        command: certonly --webroot -w /var/www/certbot
-            --email joaa020715@gmail.com
-            -d sujin.shop
-            --agree-tos
+        command: certonly --webroot -w /var/www/certbot --email joaa020715@gmail.com -d sujin.shop --agree-tos
+
+networks:
+    mynetwork: # ← 추가
